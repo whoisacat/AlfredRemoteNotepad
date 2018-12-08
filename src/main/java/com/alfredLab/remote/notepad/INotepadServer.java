@@ -34,5 +34,5 @@ public interface INotepadServer extends Remote{
 
     void changeWorkDir(String newDir) throws RemoteException;
 
-//    void goUp() throws RemoteException;
+    void goUp() throws RemoteException;
 }

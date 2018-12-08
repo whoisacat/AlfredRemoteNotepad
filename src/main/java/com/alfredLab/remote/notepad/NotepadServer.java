@@ -95,14 +95,25 @@ public class NotepadServer extends UnicastRemoteObject implements INotepadServer
         }
     }
 
-//    @Override public void goUp(){
-//        String[] as = mDir.getAbsolutePath().split(SLASH);
-//        String newDir = as[0];
-//        for(int i = 1; i < as.length - 1; i++){
-//            newDir = newDir.concat(SLASH).concat(as[i]);
-//        }
-//        mDir = new File(newDir);
-//    }
+    @Override public void goUp(){
+        System.out.println("@Override public void goUp(){");
+        System.out.println("    mDir = " + mDir.getAbsolutePath());
+        String mDirString = mDir.getAbsolutePath();
+        mDirString = mDirString.replace('\\','/');
+        String[] as = mDirString.split(SLASH);
+        System.out.println("    as = " + as);
+        String newDir = as[0];
+        System.out.println("    newDir = " + newDir);
+        for(int i = 1; i < as.length - 1; i++){
+            newDir = newDir.concat(SLASH).concat(as[i]);
+        }
+        System.out.println("    newDir = " + newDir);
+        mDir = new File(newDir);
+        System.out.println("    mDir = new File(" + newDir + ");");
+        System.out.println("    " + mDir.getAbsolutePath());
+        System.out.println("    " + mDir.exists());
+        System.out.println("}");
+    }
 
     public static void main(String[] args){
         try{

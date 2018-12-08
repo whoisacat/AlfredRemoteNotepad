@@ -42,10 +42,12 @@ public class LocalLauncher{
 
     public static boolean isDir(String fileName){
         boolean ret = false;
-        try{
-            ret = mService.isDir(fileName);
-        }catch(RemoteException e){
-            e.printStackTrace();
+        if(fileName != null && !fileName.equals("")){
+            try{
+                ret = mService.isDir(fileName);
+            }catch(RemoteException e){
+                e.printStackTrace();
+            }
         }
         return ret;
     }
@@ -58,13 +60,13 @@ public class LocalLauncher{
         }
     }
 
-//    public static void goUpDir(){
-//        try{
-//            mService.goUp();
-//        }catch(RemoteException re){
-//            re.printStackTrace();
-//        }
-//    }
+    public static void goUpDir(){
+        try{
+            mService.goUp();
+        }catch(RemoteException re){
+            re.printStackTrace();
+        }
+    }
 
     private void run(){
         mGUI = new GUI(){

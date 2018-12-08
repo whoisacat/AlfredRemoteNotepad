@@ -97,8 +97,8 @@ public class OpenExistingFileChooser extends JDialog implements ListSelectionLis
 //        }
 //    }
 
-    private void sendCallbackToMenuBuilderAndDispose(String s/*,boolean goUpDir*/){
-        mCallback.callMeBack(s/*,goUpDir*/);
+    private void sendCallbackToMenuBuilderAndDispose(String s,boolean goUpDir){
+        mCallback.callMeBack(s,goUpDir);
         this.dispose();
     }
 
@@ -111,7 +111,7 @@ public class OpenExistingFileChooser extends JDialog implements ListSelectionLis
                 if (r != null && r.contains(evt.getPoint())) {
                     index = list.locationToIndex(evt.getPoint());
                     String s = (String)scrdFilesList.getSelectedValue();
-                    sendCallbackToMenuBuilderAndDispose(s/*,false*/);
+                    sendCallbackToMenuBuilderAndDispose(s,false);
                 }
             }
         }
@@ -134,10 +134,10 @@ public class OpenExistingFileChooser extends JDialog implements ListSelectionLis
     }
 
     private class MyUpDirListener implements ActionListener{
-        public final String NO_MATTER = null;
+        public final String NO_MATTER = "";
         public final boolean YES_GO_UP = true;
         @Override public void actionPerformed(ActionEvent e){
-//            sendCallbackToMenuBuilderAndDispose(NO_MATTER,YES_GO_UP);
+            sendCallbackToMenuBuilderAndDispose(NO_MATTER,YES_GO_UP);
         }
     }
 }

@@ -80,7 +80,7 @@ abstract class MyMenuBarBuilder extends JMenuBar{
         openExistingFileItem.addActionListener(e->{
             String fileName = getFileNameFromDialog(openExistingFileItem);
             System.out.println("openFile(" + fileName + ");");
-            if(fileName.equals(OpenExistingFileChooser.NO_VALUE)){
+            if(fileName == null || fileName.equals(OpenExistingFileChooser.NO_VALUE)){
                 return;
             }
             openFile(fileName);
@@ -120,12 +120,12 @@ abstract class MyMenuBarBuilder extends JMenuBar{
         remoteFileChooser. buildWindow();
         String ret = callback.getRetString();
         System.out.println("String ret = callback.getRetString(); ret = " + ret);
-        /*boolean upDir = callback.isUpDir();
+        boolean upDir = callback.isUpDir();
+        System.out.println("upDir = " + upDir);
         if(upDir){
             LocalLauncher.goUpDir();
             ret = getFileNameFromDialog(menuItem);
-        }else */
-        if(LocalLauncher.isDir(ret)){
+        }else if(LocalLauncher.isDir(ret)){
             LocalLauncher.changeWorkDir(ret);
             ret = getFileNameFromDialog(menuItem);
         }
