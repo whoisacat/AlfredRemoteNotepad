@@ -96,9 +96,9 @@ public class LocalLauncher{
                 }
             }
 
-            void getNewFile(String fullFileName){
+            void getNewFile(String fileName){
                 try{
-                    mService.getFile();
+                    mService.createFileWithExistingOrWithNo(fileName);
                 } catch(RemoteException e){
                     e.printStackTrace();
                 }

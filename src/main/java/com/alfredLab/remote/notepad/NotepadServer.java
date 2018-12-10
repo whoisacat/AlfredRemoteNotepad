@@ -21,17 +21,31 @@ public class NotepadServer extends UnicastRemoteObject implements INotepadServer
         return new ArrayList<>();
     }
 
-    public void createFileWithExistingOrWithNo(String fullFileName,
-                                               boolean existing) throws RemoteException{
+    public void createFileWithExistingOrWithNo(String fileName/*,
+                                               boolean existing*/) throws RemoteException{
+        File newFile =
+                new File(mDir.getAbsolutePath().concat(SLASH).concat(fileName));
+        if(newFile.exists()){
+            newFile.delete();
+        }
+        try{
+            newFile.createNewFile();
+        }catch(IOException e){
+            e.printStackTrace();
+        }
     }
 
     public void wrightInFile(String textAreaContent) throws RemoteException{
+
+        String text = textAreaContent.replace("\n",LINE_SEPARATOR);
         try{
             BufferedWriter bw = new BufferedWriter(new FileWriter(mFile));
-            bw.write(textAreaContent);
+            bw.write(text);
             bw.close();
         } catch(IOException ioe){
             System.out.println(this.getClass().getSimpleName() + ioe.toString());
+        }finally{
+
         }
     }
 

@@ -42,6 +42,7 @@ public abstract class GUI{
                 editingFileName = fileName;
                 String text = null;
                 try{
+                    //todo mark file as
                     System.out.println("text = getFileContent(" + editingFileName + ");");
                     text = getFileContent(editingFileName);
                     System.out.println("text = " + text);
@@ -55,15 +56,15 @@ public abstract class GUI{
             protected void saveFile(){
                 String textAreaContent = mJTextArea.getText();
                 wrightInFile(textAreaContent);
-                System.out.println(textAreaContent);
+                System.out.println("wrightInFile(" + textAreaContent + ");");
             }
 
             void createTextArea(){
                 makeWrightableTextArea();
             }
 
-            void createOrRecreateFile(String fullFileName){
-                getNewFile(fullFileName);
+            void createOrRecreateFile(String fileName){
+                getNewFile(fileName);
             }
 
             @Override OpenExistingFileChooser getRemoteJFileChooser(){
@@ -91,17 +92,25 @@ public abstract class GUI{
         }.build();
 
         mJFrame = new JFrame("AlfredNotepad");
+
+//        mJFrame.setUndecorated(true);
+//        mJFrame.setOpacity(0.8f);
+//        mJFrame.setBackground(new Color(0,0,0,64));
         mJFrame.setBackground(Color.BLACK);
         mJFrame.setForeground(Color.ORANGE);
         mJFrame.setJMenuBar(menuBar);
         mJFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        mJFrame.setSize(300, 300);
+        mJFrame.setLocationRelativeTo(null);
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        mJFrame.setSize(screenSize.width / 4 * 3,screenSize.height / 4 * 3);
+        mJFrame.setLocationRelativeTo(null);
         try{
             mJFrame.setIconImage(ImageIO.read(new File(
                     "src/main/resources/icon.png")));
         } catch(IOException e){
             e.printStackTrace();
         }
+        mJFrame.getContentPane().setBackground(Color.BLACK);
         mJFrame.setVisible(true);
         mJFrame.addWindowListener(new WindowAdapter(){
             @Override public void windowClosing(WindowEvent e){
@@ -141,11 +150,12 @@ public abstract class GUI{
     }
 
     private void makeWrightableTextArea(){
+        mJFrame.getContentPane().removeAll();
         mJTextArea = new JTextArea();
         JScrollPane JScrollPane = new JScrollPane(mJTextArea);
         JScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
         JScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        mJFrame.add(JScrollPane);
+        mJFrame.getContentPane().add(JScrollPane);
         mJTextArea.setBackground(Color.black);
         Font f = new Font(Font.MONOSPACED,Font.PLAIN,14);
         mJTextArea.setFont(f);
@@ -162,7 +172,7 @@ public abstract class GUI{
     abstract String getFileContent(String fileName) throws IOException;
     abstract void stopApp(boolean save, String text);
     abstract void wrightInFile(String textAreaContent);
-    abstract void getNewFile(String fullFileName);
+    abstract void getNewFile(String fileName);
     abstract File getRemoteWorkDir();
     abstract String[] getRemoteDirList();
 //    abstract OpenExistingFileChooser getRemoteJFileChooser();

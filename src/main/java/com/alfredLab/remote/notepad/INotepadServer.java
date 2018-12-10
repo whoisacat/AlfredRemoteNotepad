@@ -13,7 +13,7 @@ public interface INotepadServer extends Remote{
 
     ArrayList<String> getFileList() throws RemoteException;
 
-    void createFileWithExistingOrWithNo(String fullFileName,boolean existing) throws
+    void createFileWithExistingOrWithNo(String fileName/*,boolean existing*/) throws
             RemoteException; //FileManager
 
     void wrightInFile(String textAreaContent) throws RemoteException;

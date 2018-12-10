@@ -1,8 +1,8 @@
 package com.alfredLab.remote.notepad;
 
 import javax.swing.*;
+import java.awt.*;
 import java.io.File;
-import java.io.IOException;
 
 abstract class MyMenuBarBuilder extends JMenuBar{
 
@@ -13,21 +13,24 @@ abstract class MyMenuBarBuilder extends JMenuBar{
     abstract String getFileDir();
     abstract void openFile(String fullFileName);
     abstract void saveFile();
-    abstract void createOrRecreateFile(String fullFileName);
+    abstract void createOrRecreateFile(String fileName);
     abstract OpenExistingFileChooser getRemoteJFileChooser();
     abstract File getWorkDir();
     abstract String[] getWorkDirList();
 
     public JMenuBar build(){
 
+
         JMenu menuFile = createMenuFile();
         JMenu menuEdit = createMenuEdit();
 
-        JMenuBar JMenuBar = new JMenuBar();
-        JMenuBar.add(menuFile);
-        JMenuBar.add(menuEdit);
+        JMenuBar menuBar = new JMenuBar();
+        menuBar.add(menuFile);
+        menuBar.add(menuEdit);
+        menuBar.setOpaque(true);
+        menuBar.setBackground(Color.BLACK);
 
-        return JMenuBar;
+        return menuBar;
     }
 
     private JMenu createMenuEdit(){
@@ -67,18 +70,17 @@ abstract class MyMenuBarBuilder extends JMenuBar{
         JMenuItem saveFileAsItem = new JMenuItem("Save file as...");
 
         createNewFileItem.addActionListener(e->{
-            Callback callback = new Callback();
-            OpenExistingFileChooser remoteFileChooser =
-                    new OpenExistingFileChooser(getWorkDir().getAbsolutePath(),getWorkDirList(),
-                                                createNewFileItem.getText(),callback);
-            remoteFileChooser. buildWindow();
-            String ret = callback.getRetString();
-            System.out.println("ret = " + ret);
+            String fileName = getFileNameFromCreateNewDialog(createNewFileItem);
+            if(fileName == null || fileName.equals(OpenExistingFileChooser.NO_VALUE)){
+                fileName ="New text doc.txt";
+            }
+            createOrRecreateFile(fileName);
+            openFile(fileName);
         });
 
 
         openExistingFileItem.addActionListener(e->{
-            String fileName = getFileNameFromDialog(openExistingFileItem);
+            String fileName = getFileNameFromOpenExistingDialog(openExistingFileItem);
             System.out.println("openFile(" + fileName + ");");
             if(fileName == null || fileName.equals(OpenExistingFileChooser.NO_VALUE)){
                 return;
@@ -112,22 +114,44 @@ abstract class MyMenuBarBuilder extends JMenuBar{
         return JMenuFile;
     }
 
-    private String getFileNameFromDialog(JMenuItem menuItem){
+    private String getFileNameFromOpenExistingDialog(JMenuItem menuItem){
         Callback callback = new Callback();
         OpenExistingFileChooser remoteFileChooser =
-                new OpenExistingFileChooser(getWorkDir().getAbsolutePath(),getWorkDirList(),
+                new OpenExistingFileChooser(getWorkDir().getAbsolutePath(),
+                                            getWorkDirList(),
                                             menuItem.getText(),callback);
         remoteFileChooser. buildWindow();
+        remoteFileChooser.setDialogVisible();
         String ret = callback.getRetString();
         System.out.println("String ret = callback.getRetString(); ret = " + ret);
         boolean upDir = callback.isUpDir();
         System.out.println("upDir = " + upDir);
         if(upDir){
             LocalLauncher.goUpDir();
-            ret = getFileNameFromDialog(menuItem);
+            ret = getFileNameFromOpenExistingDialog(menuItem);
         }else if(LocalLauncher.isDir(ret)){
             LocalLauncher.changeWorkDir(ret);
-            ret = getFileNameFromDialog(menuItem);
+            ret = getFileNameFromOpenExistingDialog(menuItem);
+        }
+        return ret;
+
+    }private String getFileNameFromCreateNewDialog(JMenuItem menuItem){
+        Callback callback = new Callback();
+        CreateNewFileChooser remoteFileChooser =
+                new CreateNewFileChooser(getWorkDir().getAbsolutePath(),getWorkDirList(),
+                                            menuItem.getText(),callback);
+        remoteFileChooser. buildWindow();
+        remoteFileChooser.setDialogVisible();
+        String ret = callback.getRetString();
+        System.out.println("String ret = callback.getRetString(); ret = " + ret);
+        boolean upDir = callback.isUpDir();
+        System.out.println("upDir = " + upDir);
+        if(upDir){
+            LocalLauncher.goUpDir();
+            ret = getFileNameFromCreateNewDialog(menuItem);
+        }else if(LocalLauncher.isDir(ret)){
+            LocalLauncher.changeWorkDir(ret);
+            ret = getFileNameFromCreateNewDialog(menuItem);
         }
         return ret;
     }
