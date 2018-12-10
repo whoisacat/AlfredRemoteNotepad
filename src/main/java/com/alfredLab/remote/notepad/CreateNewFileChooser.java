@@ -8,13 +8,15 @@ import java.awt.event.ActionListener;
 
 public class CreateNewFileChooser extends OpenExistingFileChooser{
 
-    JTextArea mFileNameArea;
+    private JTextArea mFileNameArea;
     private JButton mButtonOk;
     private Box mDownBox;
+    private String btnOkText;
 
-    public CreateNewFileChooser(String absolutePath,String[] workDirList,String text,
-                                Callback callback){
+    CreateNewFileChooser(String absolutePath,String[] workDirList,String text,
+                         Callback callback,String btnOkText){
         super(absolutePath,workDirList,text,callback);
+        this.btnOkText = btnOkText;
     }
 
     @Override
@@ -28,8 +30,9 @@ public class CreateNewFileChooser extends OpenExistingFileChooser{
         mFileNameArea.setFont(f);
         mFileNameArea.setEditable(true);
         mFileNameArea.getCaret().setVisible(true);
+        mFileNameArea.addMouseListener(new MyDialogMouseListener());
 
-        mButtonOk = new JButton("Create new");
+        mButtonOk = new JButton(btnOkText);
         mButtonOk.setContentAreaFilled(false);
         mButtonOk.setOpaque(true);
         mButtonOk.setBackground(new Color(45,45,45));
@@ -38,6 +41,7 @@ public class CreateNewFileChooser extends OpenExistingFileChooser{
         mButtonOk.setBorderPainted(false);
         mButtonOk.setMargin(new Insets(3, 3, 3, 3));
         mButtonOk.addActionListener(new ButtonOkListener());
+        mButtonOk.addMouseListener(new MyDialogMouseListener());
 
         mDownBox = new Box(BoxLayout.X_AXIS);
         mDownBox.add(mFileNameArea);
@@ -50,7 +54,7 @@ public class CreateNewFileChooser extends OpenExistingFileChooser{
         mDownBox.setMaximumSize(new Dimension(12000,mButtonOk.getHeight()));
 
         mUpLevelBox.add(mDownBox);
-        this.getContentPane().add(this.mUpLevelBox);
+        this.getContentPane().add(mUpLevelBox);
         this.setVisible(true);
     }
     @Override public void valueChanged(ListSelectionEvent e){
@@ -60,11 +64,11 @@ public class CreateNewFileChooser extends OpenExistingFileChooser{
     @Override protected void mouseExitedRepaint(){
         super.mouseExitedRepaint();
         mButtonOk.setBackground(new Color(20,20,20));
-        mButtonOk.setForeground(new Color(230,150,0));
+        mButtonOk.setForeground(new Color(200,130,50));
         mDownBox.setBackground(new Color(20,20,20));
-        mDownBox.setForeground(new Color(230,150,0));
+        mDownBox.setForeground(new Color(200,130,50));
         mFileNameArea.setBackground(new Color(20,20,20));
-        mFileNameArea.setForeground(new Color(230,150,0));
+        mFileNameArea.setForeground(new Color(200,130,50));
     }
 
     @Override protected void mouseEnteredRepaint(){
@@ -79,7 +83,7 @@ public class CreateNewFileChooser extends OpenExistingFileChooser{
 
     private class ButtonOkListener implements ActionListener{
         @Override public void actionPerformed(ActionEvent e){
-            String s = (String) mFileNameArea.getText();
+            String s = mFileNameArea.getText();
             sendCallbackToMenuBuilderAndDispose(s,false);
         }
     }

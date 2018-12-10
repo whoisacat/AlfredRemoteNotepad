@@ -7,11 +7,9 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.util.ArrayList;
 
-public class LocalLauncher{
+class LocalLauncher{
 
-    private static LocalLauncher sLocalLauncher;
     private GUI mGUI;
     private static String HOST = "127.0.0.1";
     private static INotepadServer mService = null;
@@ -30,17 +28,11 @@ public class LocalLauncher{
         } catch(RemoteException | NotBoundException e){
             e.printStackTrace();
         }
-//        try{
-//            System.out.println(mService.getFilePath());
-//        } catch(RemoteException | NullPointerException e){/*| UnsupportedEncodingException*/
-//            e.printStackTrace();
-//        }
-
-        sLocalLauncher = new LocalLauncher();
+        LocalLauncher sLocalLauncher = new LocalLauncher();
         sLocalLauncher.run();
     }
 
-    public static boolean isDir(String fileName){
+    static boolean isDir(String fileName){
         boolean ret = false;
         if(fileName != null && !fileName.equals("")){
             try{
@@ -52,7 +44,7 @@ public class LocalLauncher{
         return ret;
     }
 
-    public static void changeWorkDir(String newDir){
+    static void changeWorkDir(String newDir){
         try{
             mService.changeWorkDir(newDir);
         }catch(RemoteException e){
@@ -60,11 +52,19 @@ public class LocalLauncher{
         }
     }
 
-    public static void goUpDir(){
+    static void goUpDir(){
         try{
             mService.goUp();
         }catch(RemoteException re){
             re.printStackTrace();
+        }
+    }
+
+    static void changeWorkFile(String fileName){
+        try{
+            mService.changeWorkFile(fileName);
+        }catch(RemoteException e){
+            e.printStackTrace();
         }
     }
 
@@ -80,15 +80,14 @@ public class LocalLauncher{
             }
 
             @Override protected String getFileContent(String fileName) throws IOException{
-                System.out.println("mService.getTextFromExistingFile(" + fileName + ");");
                 return mService.getTextFromExistingFile(fileName);
             }
 
-            protected void stopApp(boolean save, String text){
+            @Override protected void stopApp(boolean save, String text){
                 stop(save, text, mService);
             }
 
-            protected void wrightInFile(String textAreaContent){
+            @Override protected void wrightInFile(String textAreaContent){
                 try{
                     mService.wrightInFile(textAreaContent);
                 } catch(RemoteException e){
@@ -96,7 +95,7 @@ public class LocalLauncher{
                 }
             }
 
-            void getNewFile(String fileName){
+            @Override void getNewFile(String fileName){
                 try{
                     mService.createFileWithExistingOrWithNo(fileName);
                 } catch(RemoteException e){
@@ -115,31 +114,14 @@ public class LocalLauncher{
             }
 
             @Override String[] getRemoteDirList(){
-                System.out.println(this.getClass().getSimpleName() + " в LocalLauncher (new GUI)");
                 String[] dirList = null;
                 try{
                     dirList = mService.getDirList();
-                    System.out.println("ну, бля!");
                 }catch(RemoteException e){
-                    System.out.println("бля");
                     e.printStackTrace();
                 }
-                System.out.println(dirList == null ?
-                                           "dirList == null" :
-                                           "dirList == " + dirList.toString() +
-                                                   "dirListLent == " + dirList.length);
                 return dirList;
             }
-
-//            @Override protected OpenExistingFileChooser getRemoteJFileChooser(){
-////                try{
-////                    return service.getFileList();
-////                } catch(RemoteException e){
-////                    e.printStackTrace();
-//////                    return null;
-//////                }
-////                return new OpenExistingFileChooser("d:/edu","title");
-//            }
         };
     }
 

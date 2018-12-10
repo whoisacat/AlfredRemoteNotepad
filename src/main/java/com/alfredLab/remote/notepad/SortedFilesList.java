@@ -1,22 +1,12 @@
 package com.alfredLab.remote.notepad;
 
-import javafx.util.Pair;
-
 import java.io.File;
 import java.util.*;
 
-public class SortedFilesList{
-//    HashMap<String,String> filesMap = new HashMap<>();
-    ArrayList<String> list;
+class SortedFilesList{
+    private ArrayList<String> list;
 
-    public SortedFilesList(File dir,String[] dirList){
-        System.out.println(this.getClass().getSimpleName());
-        System.out.println(
-                (dir == null ? "dir == null" : "dir == " + dir.getAbsolutePath()));
-        System.out.println(dirList == null ?
-                                   "dirList == null" :
-                                   "dirList == " + dirList.toString() +
-                                           "dirListLent == " + dirList.length);
+    SortedFilesList(File dir,String[] dirList){
         list = new ArrayList<>(Arrays.asList(dirList));
         int i = 0;
         for(String s : list){
@@ -25,7 +15,7 @@ public class SortedFilesList{
             i++;
         }
         i = 0;
-        Collections.sort(list,new MyComparator());
+        list.sort(new MyComparator());
         for(String s : list){
             String[] as = s.split("/");
             list.set(i,as[as.length - 1]);
@@ -33,7 +23,7 @@ public class SortedFilesList{
         }
     }
 
-    public Vector<String> getVector(){
+    Vector<String> getVector(){
         return new Vector<>(list);
     }
 

@@ -8,12 +8,12 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 
-public abstract class GUI{
+abstract class GUI{
     private JFrame mJFrame;
     private JTextArea mJTextArea;
-    String editingFileName;
+    private String editingFileName;
 
-    public GUI(){
+    GUI(){
 
         JMenuBar menuBar = new MyMenuBarBuilder(){
 
@@ -33,19 +33,11 @@ public abstract class GUI{
                 mJTextArea.cut();
             }
 
-            @Override protected String getFileDir(){
-                return getDirOfExisting();
-            }
-
-            protected void openFile(String fileName){
-                System.out.println("protected void openFile(String " + fileName + ")");
+            @Override protected void openFile(String fileName){
                 editingFileName = fileName;
                 String text = null;
                 try{
-                    //todo mark file as
-                    System.out.println("text = getFileContent(" + editingFileName + ");");
                     text = getFileContent(editingFileName);
-                    System.out.println("text = " + text);
                 }catch(IOException e){
                     e.printStackTrace();
                 }
@@ -53,23 +45,13 @@ public abstract class GUI{
                 mJTextArea.setText(text);
             }
 
-            protected void saveFile(){
+            @Override protected void saveFile(){
                 String textAreaContent = mJTextArea.getText();
                 wrightInFile(textAreaContent);
-                System.out.println("wrightInFile(" + textAreaContent + ");");
             }
 
-            void createTextArea(){
-                makeWrightableTextArea();
-            }
-
-            void createOrRecreateFile(String fileName){
+            @Override void createOrRecreateFile(String fileName){
                 getNewFile(fileName);
-            }
-
-            @Override OpenExistingFileChooser getRemoteJFileChooser(){
-//                return getRemoteJFileChooser();
-                return null;
             }
 
             @Override File getWorkDir(){
@@ -77,25 +59,11 @@ public abstract class GUI{
             }
 
             @Override String[] getWorkDirList(){
-                String[] dirList = getRemoteDirList();
-                System.out.println("в GUI (new MyMenuBuilder)");
-                System.out.println(dirList == null ?
-                                           "dirList == null" :
-                                           "dirList == " + dirList.toString() +
-                                                   "dirListLent == " + dirList.length);
-                return dirList;
+                return getRemoteDirList();
             }
-
-//            OpenExistingFileChooser getRemoteJFileChooser(String dir, String title){
-//                return new OpenExistingFileChooser(dir,title);
-//            }
         }.build();
 
-        mJFrame = new JFrame("AlfredNotepad");
-
-//        mJFrame.setUndecorated(true);
-//        mJFrame.setOpacity(0.8f);
-//        mJFrame.setBackground(new Color(0,0,0,64));
+        mJFrame = new JFrame("AlfredRemoteNotepad");
         mJFrame.setBackground(Color.BLACK);
         mJFrame.setForeground(Color.ORANGE);
         mJFrame.setJMenuBar(menuBar);
@@ -133,7 +101,10 @@ public abstract class GUI{
     }
 
     private void onClosingWindow(){
-        int result = JOptionPane.showConfirmDialog(null, "Should I save the changes?", "Closing the app", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+        int result = JOptionPane
+                .showConfirmDialog(null,"Should I save the changes?","Closing the app",
+                                   JOptionPane.YES_NO_CANCEL_OPTION,
+                                   JOptionPane.WARNING_MESSAGE);
         switch (result) {
             case JOptionPane.YES_OPTION:
                 saveIfThereWasAnyChanges();
@@ -164,7 +135,7 @@ public abstract class GUI{
         mJFrame.setVisible(true);
     }
 
-    public void closeDialog(){
+    void closeDialog(){
         mJFrame.dispose();
     }
 
@@ -175,6 +146,5 @@ public abstract class GUI{
     abstract void getNewFile(String fileName);
     abstract File getRemoteWorkDir();
     abstract String[] getRemoteDirList();
-//    abstract OpenExistingFileChooser getRemoteJFileChooser();
 
 }
